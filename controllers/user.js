@@ -19,11 +19,34 @@ const getAllUsers = asyncHandler(async (req, res) => {
 
 const getTweetsByUserId = asyncHandler(async (req, res) => {
   const id = req.params.userId;
-  const users = await userModel.findById(id).populate("tweets").exec();
+  const users = await userModel.findById(id).populate("tweets").select("-followers -followings -password -__v ").exec();
   res.status(200).json(users);
 });
 
+const getUserFollowings = asyncHandler(async (req, res) => {
+  const id = req.params.userId;
+  const user = await userModel.findById(id).populate("followings","-__v -tweets -password -followers -followings")
+  .select('-password -followers -tweets -__v').exec();
+  res.status(200).json(user);
+});
+
+const getUserFollowers = asyncHandler(async (req, res) => {
+  const id = req.params.userId;
+  const user = await userModel.findById(id).populate("followers","-__v -tweets -password -followers -followings")
+  .select('-password -followings -tweets -__v').exec();
+  res.status(200).json(user);
+});
+
 const getUserById = async (req, res) => {
+  const id = req.params.userId;
+  const user = await userModel.findById(id).select("-password -__v");
+  res.status(200).json({
+    id: user?.id,
+    attributes: user,
+    meta: {},
+  });
+};
+const getUserByTweet = async (req, res) => {
   const id = req.params.userId;
   const user = await userModel.findById(id).select("-password -__v");
   res.status(200).json({
@@ -47,7 +70,7 @@ const createUser = asyncHandler(async (req, res) => {
 
 const deleteUser = async (req, res) => {
   const id = req.params.userId;
-  const result = await userModel.findByIdAndDelete(id).select('-password -__v');
+  const result = await userModel.findByIdAndDelete(id).select("-password -__v");
   res.status(200).json({
     id: result?.id,
     data: {
@@ -74,4 +97,7 @@ module.exports = {
   deleteUser,
   updateUser,
   getTweetsByUserId,
+  getUserByTweet,
+  getUserFollowers,
+  getUserFollowings
 };

@@ -7,12 +7,14 @@ const {
   createUser,
   deleteUser,
   updateUser,
+  getUserFollowers,
+  getUserFollowings
 } = require("../controllers/user.js");
 
 const { PostUserValidator,UpdateUserValidator } = require("../validators/index.js");
 const { handleValidation } = require("../middlewares/index.js");
 const { checkUserData } = require("../middlewares/data/index");
-const { userParamsHandler } = require("../middlewares/params/index.js");
+const { userParamsHandler } = require("../middlewares/params/user.js");
 userRouter
   .get("/", checkUserData, getAllUsers)
   .post("/", PostUserValidator, handleValidation, createUser);
@@ -22,5 +24,6 @@ userRouter
   .put("/:userId", UpdateUserValidator, handleValidation, updateUser)
   .delete("/:userId", deleteUser);
 userRouter.get("/:userId/tweets", getTweetsByUserId);
-
+userRouter.get("/:userId/followers", getUserFollowers);
+userRouter.get("/:userId/followings", getUserFollowings);
 module.exports = userRouter;

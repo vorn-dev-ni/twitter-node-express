@@ -3,8 +3,6 @@ const { userModel } = require("../../models/user.js");
 const { isValidObjectId } = require("mongoose");
 
 const userParamsHandler = asyncHandler(async (req, res, next, id) => {
-  console.log('run',id);
-
   if (!isValidObjectId(id)) {
     return res.status(400).json({
       error: {
