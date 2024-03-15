@@ -21,4 +21,6 @@ async function linkRelation() {
         console.log(`user: ${user._id} saved with tweets: ${tweetArray.length}`)
     })
 }
+
+module.exports = {linkRelation}
 linkRelation()
