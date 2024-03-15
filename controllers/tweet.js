@@ -1,6 +1,9 @@
+const asyncHandler = require("express-async-handler");
+const { ObjectId } = require("mongodb");
 const { tweetModel } = require("../models/tweet.js");
-
-const getAllTweets = async (req, res) => {
+const { userModel } = require("../models/user.js");
+const { checkUserIdExist } = require("../middlewares/data/index.js");
+const getAllTweets = asyncHandler(async (req, res) => {
   const tweets = await tweetModel
     .find({})
     .select("-__v")
@@ -16,9 +19,9 @@ const getAllTweets = async (req, res) => {
   res.status(200).json({
     data: payload,
   });
-};
+});
 
-const getTweetById = async (req, res) => {
+const getTweetById = asyncHandler(async (req, res) => {
   const tweet = await tweetModel
     .findById(req.params.id)
     .select("-__v")
@@ -28,25 +31,42 @@ const getTweetById = async (req, res) => {
     attributes: tweet,
     meta: {},
   });
-};
+});
 
-const postTweet = async (req, res) => {
-  const id = req.params.id;
-  const tweet = await tweetModel.findById(id).populate("byUser");
-  res.send(tweet);
-};
+const postTweet = asyncHandler(async (req, res, next) => {
+  const { byUserId, text } = req.body;
+  checkUserIdExist(req, res, next, byUserId);
+  const tweet = await tweetModel.create({ text, byUserId });
+  return res.status(200).json(tweet);
+});
 
-const updateTweetById = async (req, res) => {
+const updateTweetById = asyncHandler(async (req, res, next) => {
   const id = req.params.id;
-  const tweet = await tweetModel.findById(id).populate("byUser");
-  res.send(tweet);
-};
+  const { byUserId, text } = req.body;
+  return checkUserIdExist(req, res, next, byUserId);
+  const tweet = await tweetModel.findByIdAndUpdate(
+    id,
+    { text, byUserId },
+    {
+      new: true,
+    }
+  );
+  res.status(200).json(tweet);
+});
 
-const deleteTweetById = async (req, res) => {
+const deleteTweetById = asyncHandler(async (req, res) => {
   const id = req.params.id;
-  const tweet = await tweetModel.findById(id).populate("byUser");
-  res.send(tweet);
-};
+  const tweet = await tweetModel.findOneAndDelete(id);
+  res.status(200).json({
+    id: tweet?.id,
+    data: {
+      attributes: tweet,
+    },
+    meta: {
+      response: "User has  been deleted",
+    },
+  });
+});
 
 module.exports = {
   getTweetById,

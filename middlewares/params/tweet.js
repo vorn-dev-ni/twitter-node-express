@@ -19,7 +19,7 @@ const tweetParamsHandler = asyncHandler(async (req, res, next, id) => {
       data: null,
       error: {
         status: 404,
-        name: "Run Time",
+        name: "Operation Input",
         message: "Data is Empty",
         details: {},
       },

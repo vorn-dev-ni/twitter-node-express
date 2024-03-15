@@ -1,6 +1,6 @@
 const { checkSchema } = require("express-validator");
 
-const PostUserValidator = checkSchema({
+const UserValidator = checkSchema({
   email: {
     isEmail: {
       errorMessage: "Invalid Email Format",
@@ -26,29 +26,24 @@ const PostUserValidator = checkSchema({
     errorMessage: "Invalid Dob must not be empty",
   },
 });
-const UpdateUserValidator = checkSchema({
-  email: {
-    isEmail: {
-      errorMessage: "Invalid Email Format",
-    },
-    isEmpty: true,
-  },
 
-  username: {
+const TweetValidator = checkSchema({
+  text: {
+    trim: true,
+    notEmpty: true,
     isLength: {
       options: {
-        min: 3,
-        max: 10,
+        max: 250,
       },
-      errorMessage: "Only max 10 characters allowed",
+      errorMessage: "Only max 250 characters allowed",
     },
-    trim: true,
-    isEmpty: true,
+    errorMessage: "Invalid Text must not be empty",
   },
-  dateOfBirth: {
-    isDate: true,
-    errorMessage: "Invalid Dob ",
-    isEmpty: true,
+  byUserId: {
+    notEmpty: true,
+    trim: true,
+    errorMessage: "Invalid Username must not be empty",
   },
 });
-module.exports = { PostUserValidator, UpdateUserValidator };
+
+module.exports = { UserValidator, TweetValidator };

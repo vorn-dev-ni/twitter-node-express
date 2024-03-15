@@ -14,7 +14,7 @@ app.use("*", (req, res, next) => {
   res.status(404).json({
     error: {
       status: 404,
-      name: "NotFoundError",
+      name: "Not Found Error",
       message: "Page Not Found or Exist",
       details: {},
     },
