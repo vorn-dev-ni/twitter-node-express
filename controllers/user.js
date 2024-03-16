@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const { userModel } = require("../models/user.js");
 const getAllUsers = asyncHandler(async (req, res) => {
-  const users = await userModel.find({}).select("-__v -password");
+  const users = await userModel.find({}).select("-__v -password -tweets");
   let payload = [];
   users?.forEach((user) => {
     const result = {
